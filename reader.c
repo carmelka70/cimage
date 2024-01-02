@@ -11,26 +11,51 @@ typedef struct{
 }chunk;
 
 void read_file(const char *filename ,uint8_t **buffer);
-void get_chunk(uint8_t *buffer ,chunk *c);
+chunk get_chunk(uint8_t *buffer);
 
 
 int
 main(){
-
 	uint8_t *buffer;
 
 	read_file("C:\\Users\\carmil\\workspace\\cimage\\image.png" ,&buffer);	
 
-	for(int i = 0; i < 16; i++){
-		printf("%d\n" ,buffer[i]);
+	buffer = buffer + 8;
+
+	chunk *chunks = NULL;
+
+	int iteration = 0;
+
+	while(iteration < 10){
+		chunks = realloc(chunks ,sizeof(chunk) * (iteration + 1));
+		if(!chunks){
+			printf("Chunks failed to reallocate at iteration %d\n" ,iteration);
+			free(chunks);
+			return 1;
+		}
+
+		chunks[iteration] = get_chunk(buffer);
+
+		if(!strcmp(chunks[iteration].type ,"IEND")){
+			break;
+		}
+
+		buffer += (12 + chunks[iteration].length);
+		iteration++;
 	}
 
-	chunk newcnk;
-	get_chunk(buffer + 8 ,&newcnk);
+	for(int i = 0; i < iteration; i++){
+		printf("type:%s\nlength:%d\n\n" ,chunks[i].type ,chunks[i].length);
+	}
 
-	printf("\ntype:%s\nlength:%d" ,newcnk.type ,newcnk.length);
+	for(int i = 0; i < iteration; i++){
+		free(chunks[i].data);
+	}
 
-	free(newcnk.data);
+	free(chunks);
+
+
+	free(buffer);
     return 0;
 }
 
@@ -49,7 +74,7 @@ void read_file(const char *filename ,uint8_t **buffer){
 
 	fseek(fp ,0 ,SEEK_SET);
 
-	printf("the size is %d\n" ,filesize);
+	printf("the size is: %d\n\n" ,filesize);
 
 	*buffer = malloc(filesize);
 
@@ -64,21 +89,25 @@ void read_file(const char *filename ,uint8_t **buffer){
 	fclose(fp);
 }
 
-void get_chunk(uint8_t *buffer ,chunk *c){
-	c->length = (uint32_t)((buffer[0] << 24) | (buffer[1] << 16) | (buffer[2] << 8) | buffer[3]);
+chunk
+get_chunk(uint8_t *buffer){
+	chunk c;
+	c.length = (uint32_t)((buffer[0] << 24) | (buffer[1] << 16) | (buffer[2] << 8) | buffer[3]);
 
-	strncpy(c->type ,buffer + 4 ,4);
+	strncpy(c.type ,buffer + 4 ,4);
 
-	c->type[5] = '\0';
+	c.type[4] = '\0';
 
-	c->data = malloc(c->length);
+	c.data = malloc(c.length);
 	
-	if(!c->data){
+	if(!c.data){
 		printf("Failed to allocate space for data\n");
 		exit(1);
 	}
 
-	memcpy(c->data ,buffer + 8 ,c->length);
+	memcpy(c.data ,buffer + 8 ,c.length);
 	
-	c->crc = (uint32_t)buffer[8 + c->length];	
+	c.crc = (uint32_t)buffer[8 + c.length];
+
+	return c;	
 }
