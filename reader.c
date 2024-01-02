@@ -21,6 +21,7 @@ typedef struct{
 
 void read_file(const char *filename ,uint8_t **buffer); //Reads filename into buffer. stored in bytes
 chunk get_chunk(uint8_t *buffer);//gets the chunk at buffer
+void print_data(chunk c);
 
 
 int
@@ -54,6 +55,9 @@ main(){
 
 	for(int i = 0; i <= index; i++){//print all chunks type and length
 		printf("type:%s\nlength:%d\n\n" ,chunks[i].type ,chunks[i].length);
+		if (strcmp(chunks[i].type ,"IDAT")){
+			print_data(chunks[i]);
+		}
 	}
 
 	for(int i = 0; i <= index; i++){//free all of the chunks data
@@ -108,22 +112,30 @@ read_file(const char *filename ,uint8_t **buffer){
 chunk
 get_chunk(uint8_t *buffer){
 	chunk c;
-	c.length = (uint32_t)((buffer[0] << 24) | (buffer[1] << 16) | (buffer[2] << 8) | buffer[3]);
+	c.length = (uint32_t)((buffer[0] << 24) | (buffer[1] << 16) | (buffer[2] << 8) | buffer[3]);//gets the chunks length in big endiann
 
-	strncpy(c.type ,buffer + 4 ,4);
+	strncpy(c.type ,buffer + 4 ,4);//copys type from buffer
 
-	c.type[4] = '\0';
+	c.type[4] = '\0';//adds \0 to string
 
-	c.data = malloc(c.length);
+	c.data = malloc(c.length);//allocates space for data based on length
 	
-	if(!c.data){
+	if(!c.data){//check if allocation was successfull
 		printf("Failed to allocate space for data\n");
 		exit(1);
 	}
 
-	memcpy(c.data ,buffer + 8 ,c.length);
+	memcpy(c.data ,buffer + 8 ,c.length);//copys data from buffer
 	
-	c.crc = (uint32_t)buffer[8 + c.length];
+	c.crc = (uint32_t)((buffer[8 + c.length] << 24) | (buffer[9 + c.length] << 16) | (buffer[10 + c.length] << 8) | buffer[11 + c.length]);//gets the chunks crc in big endiann
 
 	return c;	
+}
+
+void
+print_data(chunk c){
+	for(int i = 0; i < c.length; i++){
+		printf("%d " ,c.data[i]);
+	}
+	printf("\n");
 }
