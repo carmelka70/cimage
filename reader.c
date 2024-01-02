@@ -21,6 +21,7 @@ typedef struct{
 
 void read_file(const char *filename ,uint8_t **buffer); //Reads filename into buffer. stored in bytes
 chunk get_chunk(uint8_t *buffer);//gets the chunk at buffer
+int read_to_chunk_arr(uint8_t *buffer ,chunk **chunks);
 void print_data(chunk c);
 
 
@@ -30,37 +31,18 @@ main(){
 
 	read_file("C:\\Users\\carmil\\workspace\\cimage\\image.png" ,&buffer);	
 
-	chunk *chunks = NULL;//this will store the chunks
+	chunk *chunks;
 
-	uint8_t *bi = buffer + 8;//buffer index for the loop
-	int index = 0;//store the current index spot
+	int chunkslen = read_to_chunk_arr(buffer ,&chunks);
 
-	while(index < MAX_ITERATIONS){
-		chunks = realloc(chunks ,sizeof(chunk) * (index + 1));//adds a chunk at the end of chunks
-		if(!chunks){//check for errors at reallocation
-			printf("Chunks failed to reallocate at index %d\n" ,index);
-			free(chunks);
-			return 1;
-		}
-
-		chunks[index] = get_chunk(bi);//get chunk from buffer index to chunks at index index
-
-		if(!strcmp(chunks[index].type ,"IEND")){//checks for last chunk
-			break;
-		}
-
-		bi += (12 + chunks[index].length);//buffer index is being readjusted
-		index++;//next iteration
-	}
-
-	for(int i = 0; i <= index; i++){//print all chunks type and length
+	for(int i = 0; i <= chunkslen; i++){//print all chunks type length and data fields
 		printf("type:%s\nlength:%d\n\n" ,chunks[i].type ,chunks[i].length);
 		if (strcmp(chunks[i].type ,"IDAT")){
 			print_data(chunks[i]);
 		}
 	}
 
-	for(int i = 0; i <= index; i++){//free all of the chunks data
+	for(int i = 0; i <= chunkslen; i++){//free all of the chunks data
 		free(chunks[i].data);
 	}
 
@@ -130,6 +112,34 @@ get_chunk(uint8_t *buffer){
 	c.crc = (uint32_t)((buffer[8 + c.length] << 24) | (buffer[9 + c.length] << 16) | (buffer[10 + c.length] << 8) | buffer[11 + c.length]);//gets the chunks crc in big endiann
 
 	return c;	
+}
+
+
+int
+read_to_chunk_arr(uint8_t *buffer ,chunk **chunks){
+	*chunks = NULL;//this will store the chunks
+
+	uint8_t *bi = buffer + 8;//buffer index for the loop
+	int index = 0;//store the current index spot
+
+	while(index < MAX_ITERATIONS){
+		*chunks = realloc(*chunks ,sizeof(chunk) * (index + 1));//adds a chunk at the end of chunks
+		if(!*chunks){//check for errors at reallocation
+			printf("Chunks failed to reallocate at index %d\n" ,index);
+			free(*chunks);
+			return 1;
+		}
+
+		(*chunks)[index] = get_chunk(bi);//get chunk from buffer index to chunks at index index
+
+		if(!strcmp((*chunks)[index].type ,"IEND")){//checks for last chunk
+			break;
+		}
+
+		bi += (12 + (*chunks)[index].length);//buffer index is being readjusted
+		index++;//next iteration
+	}
+	return index;
 }
 
 void
