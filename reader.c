@@ -35,14 +35,14 @@ main(){
 
 	int chunkslen = read_to_chunk_arr(buffer ,&chunks);
 
-	for(int i = 0; i <= chunkslen; i++){//print all chunks type length and data fields
+	for(int i = 0; i < chunkslen; i++){//print all chunks type length and data fields
 		printf("type:%s\nlength:%d\n\n" ,chunks[i].type ,chunks[i].length);
 		if (strcmp(chunks[i].type ,"IDAT")){
 			print_data(chunks[i]);
 		}
 	}
 
-	for(int i = 0; i <= chunkslen; i++){//free all of the chunks data
+	for(int i = 0; i < chunkslen; i++){//free all of the chunks data
 		free(chunks[i].data);
 	}
 
