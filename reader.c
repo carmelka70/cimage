@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <string.h>
 
+#include "reader.h"
 
 #define MAX_ITERATIONS 10
 
@@ -11,46 +12,7 @@
 //4-byte type
 //length-byte data
 //4-byte crc
-//the int values are stored in big-endiann
-typedef struct{
-	uint32_t length;
-	char type[5]; //create 5 chars to include \0
-	uint8_t *data;
-	uint32_t crc;
-}chunk;
 
-void read_file(const char *filename ,uint8_t **buffer); //Reads filename into buffer. stored in bytes
-chunk get_chunk(uint8_t *buffer);//gets the chunk at buffer
-int read_to_chunk_arr(uint8_t *buffer ,chunk **chunks);
-void print_data(chunk c);
-
-
-int
-main(){
-	uint8_t *buffer;
-
-	read_file("C:\\Users\\carmil\\workspace\\cimage\\image.png" ,&buffer);	
-
-	chunk *chunks;
-
-	int chunkslen = read_to_chunk_arr(buffer ,&chunks);
-
-	for(int i = 0; i < chunkslen; i++){//print all chunks type length and data fields
-		printf("type:%s\nlength:%d\n\n" ,chunks[i].type ,chunks[i].length);
-		if (strcmp(chunks[i].type ,"IDAT")){
-			print_data(chunks[i]);
-		}
-	}
-
-	for(int i = 0; i < chunkslen; i++){//free all of the chunks data
-		free(chunks[i].data);
-	}
-
-	free(chunks);
-
-	free(buffer);
-    return 0;
-}
 
 
 void
