@@ -3,21 +3,31 @@
 
 int
 main(int argc ,char *argv[]){
-	if(argc > 2){
-		printf("ERROR: too many arguments\n");
-		return 1;
-	}
-	if(argc == 1){
-		printf("ERROR: please specify the image path\n");
+
+	if (argc != 3){
+		printf("not the correct amount of arguments\n");
 		return 1;
 	}
 	
 	uint8_t *buffer;
 	read_file(argv[1] ,&buffer);
 
+	char* arg2 = argv[2];
+	int skip_anc;
+	if (!strcmp(arg2 ,"true")){
+		skip_anc = 0;
+	}
+	else if (!strcmp(arg2 ,"false")){
+		skip_anc = 1;
+	}
+	else{
+		printf("Second argument is invalid. please choose either true or false\n");
+		return 1;
+	};
+
 
 	chunk *chunks;
-	int chunkslen = read_to_chunk_arr(buffer ,&chunks ,1);
+	int chunkslen = read_to_chunk_arr(buffer ,&chunks ,skip_anc);
 
 	free(buffer);
 
