@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "reader.h"
+#include "vars.h"
 
 int
 main(int argc ,char *argv[]){
