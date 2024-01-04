@@ -17,7 +17,7 @@ main(int argc ,char *argv[]){
 
 
 	chunk *chunks;
-	int chunkslen = read_to_chunk_arr(buffer ,&chunks);
+	int chunkslen = read_to_chunk_arr(buffer ,&chunks ,1);
 
 	free(buffer);
 

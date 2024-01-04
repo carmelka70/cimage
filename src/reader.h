@@ -14,8 +14,8 @@ typedef struct{
 }chunk;
 
 void read_file(const char *filename ,uint8_t **buffer);
-chunk get_chunk(uint8_t *buffer);
-int read_to_chunk_arr(uint8_t *buffer ,chunk **chunks);
+int get_chunk(uint8_t *buffer ,chunk *c ,int skip_anc);
+int read_to_chunk_arr(uint8_t *buffer ,chunk **chunks ,int skip_anc);
 void print_data(chunk c);
 
 #endif
