@@ -1,23 +1,9 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <string.h>
-
 #include "reader.h"
 
 #define MAX_ITERATIONS 10
 
-//PNG uses a chunk format structure of
-//4-byte length
-//4-byte type
-//length-byte data
-//4-byte crc
-
-
-
 void
 read_file(const char *filename ,uint8_t **buffer){
-	
 	//reads the file
 	FILE *fp;
 	fp = fopen(filename ,"rb");
@@ -55,13 +41,11 @@ read_file(const char *filename ,uint8_t **buffer){
 
 int
 get_chunk(uint8_t *buffer ,chunk *c ,int skip_anc){
-
 	uint32_t length = (uint32_t)((buffer[0] << 24) | (buffer[1] << 16) | (buffer[2] << 8) | buffer[3]);//gets the chunks length in big endiann
 
 	if(skip_anc && ((int)(buffer[4]) >= 97 && (int)(buffer[4]) <= 122)){
 		return length;
 	}
-
 	c->length = length;
 
 	strncpy(c->type ,buffer + 4 ,4);//copys type from buffer
@@ -99,12 +83,10 @@ read_to_chunk_arr(uint8_t *buffer ,chunk **chunks ,int skip_anc){
 		}
 
 		uint32_t status = get_chunk(bi ,*chunks + index ,skip_anc);//get chunk from buffer index to chunks at index index
-
-		if (status){
+		if (status){//if skip_anc is used and the chunk is anc increase buffer index and continue
 			bi += 12 + status;
 			continue;
 		}
-
 		if(!strcmp((*chunks)[index].type ,"IEND")){//checks for last chunk
 			break;
 		}
@@ -117,6 +99,7 @@ read_to_chunk_arr(uint8_t *buffer ,chunk **chunks ,int skip_anc){
 
 void
 print_data(chunk c){
+	//prints chunk c data
 	for(int i = 0; i < c.length; i++){
 		printf("%d " ,c.data[i]);
 	}
