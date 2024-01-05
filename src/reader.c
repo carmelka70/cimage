@@ -1,4 +1,5 @@
 #include "reader.h"
+#include "vars.h"
 
 #define MAX_ITERATIONS 10
 
@@ -79,7 +80,7 @@ read_to_chunk_arr(uint8_t *buffer ,chunk **chunks ,int skip_anc){
 		if(!*chunks){//check for errors at reallocation
 			printf("Chunks failed to reallocate at index %d\n" ,index);
 			free(*chunks);
-			return 1;
+			exit(1);
 		}
 
 		uint32_t status = get_chunk(bi ,*chunks + index ,skip_anc);//get chunk from buffer index to chunks at index index
@@ -105,3 +106,51 @@ print_data(chunk c){
 	}
 	printf("\n");
 }
+
+void
+get_chunks_data(chunk *chunks ,int chunkslen){
+	for(int i = 0; i < chunkslen; i++){
+		char* type = chunks[i].type;
+		if (!strncmp(type ,"IHDR" ,5)) get_IHDR();
+		else if (!strncmp(type ,"PLTE" ,5)) get_PLTE(); 
+		else if (!strncmp(type ,"IDAT" ,5)) get_IDAT();
+		else if (!strncmp(type ,"tRNS" ,5)) get_tRNS();
+		else if (!strncmp(type ,"gAMA" ,5)) get_gAMA(); 
+		else if (!strncmp(type ,"cHRM" ,5)) get_cHRM();
+		else if (!strncmp(type ,"sRGB" ,5)) get_sRGB();
+		else if (!strncmp(type ,"iCCP" ,5)) get_iCCP();
+		else if (!strncmp(type ,"tEXt" ,5)) get_tEXt();
+		else if (!strncmp(type ,"zTXt" ,5)) get_zTXt();
+		else if (!strncmp(type ,"iTXt" ,5)) get_iTXt();
+		else if (!strncmp(type ,"bKGD" ,5)) get_bKGD();
+		else if (!strncmp(type ,"pHYs" ,5)) get_pHYs();
+		else if (!strncmp(type ,"sBIT" ,5)) get_sBIT();
+		else if (!strncmp(type ,"hIST" ,5)) get_hIST();
+		else if (!strncmp(type ,"tIME" ,5)) get_tIME();
+		else if (!strncmp(type ,"IEND" ,5)) return; 
+		else{
+			printf("Failed to read chunk %d with type %s\n" ,i ,type);
+			exit(1);
+		}
+
+	}
+	
+}
+/*reading chunks into vars.h*/
+void get_IHDR(void){};
+void get_PLTE(void){};
+void get_IDAT(void){};
+void get_tRNS(void){};
+void get_gAMA(void){};
+void get_cHRM(void){};
+void get_sRGB(void){};
+void get_iCCP(void){};
+void get_tEXt(void){};
+void get_zTXt(void){};
+void get_iTXt(void){};
+void get_bKGD(void){};
+void get_pHYs(void){};
+void get_sBIT(void){};
+void get_hIST(void){};
+void get_tIME(void){};
+

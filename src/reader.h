@@ -23,4 +23,25 @@ int get_chunk(uint8_t *buffer ,chunk *c ,int skip_anc);//gets chunk at buffer (b
 int read_to_chunk_arr(uint8_t *buffer ,chunk **chunks ,int skip_anc);//reads buffer into chunks array. use skip_anc to skip anc chunks
 void print_data(chunk c);//prints chunk c data
 
+void get_chunks_data(chunk *chunks ,int chunkslen);
+
+
+/*reading chunks into vars.h*/
+void get_IHDR(void);
+void get_PLTE(void);
+void get_IDAT(void);
+void get_tRNS(void);
+void get_gAMA(void);
+void get_cHRM(void);
+void get_sRGB(void);
+void get_iCCP(void);
+void get_tEXt(void);
+void get_zTXt(void);
+void get_iTXt(void);
+void get_bKGD(void);
+void get_pHYs(void);
+void get_sBIT(void);
+void get_hIST(void);
+void get_tIME(void);
+
 #endif
