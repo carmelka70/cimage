@@ -43,7 +43,7 @@ main(int argc ,char *argv[]){
 	}
 
 	//free chunks data and array
-	for(int i = 0; i < chunkslen; i++){
+	for(int i = 0; i <= chunkslen; i++){
 		free(chunks[i].data);
 	}
 	free(chunks);

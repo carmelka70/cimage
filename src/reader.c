@@ -88,7 +88,7 @@ read_to_chunk_arr(uint8_t *buffer ,chunk **chunks ,int skip_anc){
 			bi += 12 + status;
 			continue;
 		}
-		if(!strcmp((*chunks)[index].type ,"IEND")){//checks for last chunk
+		if(!strncmp((*chunks)[index].type ,"IEND" ,5)){//checks for last chunk
 			break;
 		}
 
