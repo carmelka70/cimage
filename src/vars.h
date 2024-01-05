@@ -30,10 +30,10 @@ extern uint16_t tRNS_color[3];
 extern uint32_t gAMA_gamma;
 
 //cHRM - local color mapping
-extern uint32_t cHRM_white_x ,cHRM_white_y;
-extern uint32_t cHRM_red_x ,cHRM_red_y;
-extern uint32_t cHRM_green_x ,cHRM_green_y;
-extern uint32_t cHRM_blue_x ,cHRM_blue_y;
+extern uint32_t cHRM_white[2];
+extern uint32_t cHRM_red[2];
+extern uint32_t cHRM_green[2];
+extern uint32_t cHRM_blue[2];
 
 //sRGB - use srgb
 extern uint8_t sRGB_intent;
@@ -59,21 +59,27 @@ examples of keywords:
                     GIF comment
 */
 //tEXt - textual information
-extern char *tEXt_keyword[];
-extern char *tEXt_text[];
+extern struct{
+	char *keyword;
+	char *text;
+} *tEXt_blocks;
 
 //zTXt - compressed textual information
-extern char *zTXt_keyword[];
-extern uint8_t zTXt_compression_method;
-extern char *zTXt_text[];
+extern struct{
+	char *keyword;
+	uint8_t compression_method;
+	char *text;
+} *zTXt_blocks;
 
 //iTXt - unicode textual information
-extern char *iTXt_keyword[];
-extern uint8_t iTXt_compression_flag;
-extern uint8_t iTXt_compression_method;
-extern char *iTXt_language_tag;
-extern char *iTXt_translated_keyword;
-extern char *iTXt_text;
+extern struct{
+	char *keyword;
+	uint8_t compression_flag;
+	uint8_t compression_method;
+	char *language_tag;
+	char *translated_keyword;
+	char *text;
+} *iTXt_blocks;
 
 //bKGD - background color
 extern uint8_t bKGD_palette;
