@@ -27,21 +27,21 @@ void get_chunks_data(chunk *chunks ,int chunkslen);
 
 
 /*reading chunks into vars.h*/
-void get_IHDR(void);
-void get_PLTE(void);
-void get_IDAT(void);
-void get_tRNS(void);
-void get_gAMA(void);
-void get_cHRM(void);
-void get_sRGB(void);
-void get_iCCP(void);
-void get_tEXt(void);
-void get_zTXt(void);
-void get_iTXt(void);
-void get_bKGD(void);
-void get_pHYs(void);
-void get_sBIT(void);
-void get_hIST(void);
-void get_tIME(void);
+void get_IHDR(uint8_t *data);
+void get_PLTE(uint8_t *data);
+void get_IDAT(uint8_t *data);
+void get_tRNS(uint8_t *data);
+void get_gAMA(uint8_t *data);
+void get_cHRM(uint8_t *data);
+void get_sRGB(uint8_t *data);
+void get_iCCP(uint8_t *data);
+void get_tEXt(uint8_t *data);
+void get_zTXt(uint8_t *data);
+void get_iTXt(uint8_t *data);
+void get_bKGD(uint8_t *data);
+void get_pHYs(uint8_t *data);
+void get_sBIT(uint8_t *data);
+void get_hIST(uint8_t *data);
+void get_tIME(uint8_t *data);
 
 #endif

@@ -3,6 +3,8 @@
 
 #define MAX_ITERATIONS 10
 
+#define read4byteint(buffer) ((uint32_t)((*buffer << 24) | (*(buffer+1) << 16) | (*(buffer+2) << 8) | *(buffer+3)))
+
 void
 read_file(const char *filename ,uint8_t **buffer){
 	//reads the file
@@ -42,7 +44,7 @@ read_file(const char *filename ,uint8_t **buffer){
 
 int
 get_chunk(uint8_t *buffer ,chunk *c ,int skip_anc){
-	uint32_t length = (uint32_t)((buffer[0] << 24) | (buffer[1] << 16) | (buffer[2] << 8) | buffer[3]);//gets the chunks length in big endiann
+	uint32_t length = read4byteint(buffer);//gets the chunks length in big endiann
 
 	if(skip_anc && ((int)(buffer[4]) >= 97 && (int)(buffer[4]) <= 122)){
 		return length;
@@ -60,10 +62,7 @@ get_chunk(uint8_t *buffer ,chunk *c ,int skip_anc){
 	}
 	memcpy(c->data ,buffer + 8 ,c->length);//copys data from buffer
 	
-	c->crc = (uint32_t)((buffer[8 + c->length] << 24) | 
-						(buffer[9 + c->length] << 16) |
-						(buffer[10 + c->length] << 8) |
-						 buffer[11 + c->length]);	//gets the chunks crc in big endiann
+	c->crc = read4byteint(buffer + (8 + c->length));//gets the chunks crc in big endiann
 	return 0;
 }
 
@@ -111,22 +110,22 @@ void
 get_chunks_data(chunk *chunks ,int chunkslen){
 	for(int i = 0; i < chunkslen; i++){
 		char* type = chunks[i].type;
-		if (!strncmp(type ,"IHDR" ,5)) get_IHDR();
-		else if (!strncmp(type ,"PLTE" ,5)) get_PLTE(); 
-		else if (!strncmp(type ,"IDAT" ,5)) get_IDAT();
-		else if (!strncmp(type ,"tRNS" ,5)) get_tRNS();
-		else if (!strncmp(type ,"gAMA" ,5)) get_gAMA(); 
-		else if (!strncmp(type ,"cHRM" ,5)) get_cHRM();
-		else if (!strncmp(type ,"sRGB" ,5)) get_sRGB();
-		else if (!strncmp(type ,"iCCP" ,5)) get_iCCP();
-		else if (!strncmp(type ,"tEXt" ,5)) get_tEXt();
-		else if (!strncmp(type ,"zTXt" ,5)) get_zTXt();
-		else if (!strncmp(type ,"iTXt" ,5)) get_iTXt();
-		else if (!strncmp(type ,"bKGD" ,5)) get_bKGD();
-		else if (!strncmp(type ,"pHYs" ,5)) get_pHYs();
-		else if (!strncmp(type ,"sBIT" ,5)) get_sBIT();
-		else if (!strncmp(type ,"hIST" ,5)) get_hIST();
-		else if (!strncmp(type ,"tIME" ,5)) get_tIME();
+		if (!strncmp(type ,"IHDR" ,5)) get_IHDR(chunks[i].data);
+		else if (!strncmp(type ,"PLTE" ,5)) get_PLTE(chunks[i].data); 
+		else if (!strncmp(type ,"IDAT" ,5)) get_IDAT(chunks[i].data);
+		else if (!strncmp(type ,"tRNS" ,5)) get_tRNS(chunks[i].data);
+		else if (!strncmp(type ,"gAMA" ,5)) get_gAMA(chunks[i].data); 
+		else if (!strncmp(type ,"cHRM" ,5)) get_cHRM(chunks[i].data);
+		else if (!strncmp(type ,"sRGB" ,5)) get_sRGB(chunks[i].data);
+		else if (!strncmp(type ,"iCCP" ,5)) get_iCCP(chunks[i].data);
+		else if (!strncmp(type ,"tEXt" ,5)) get_tEXt(chunks[i].data);
+		else if (!strncmp(type ,"zTXt" ,5)) get_zTXt(chunks[i].data);
+		else if (!strncmp(type ,"iTXt" ,5)) get_iTXt(chunks[i].data);
+		else if (!strncmp(type ,"bKGD" ,5)) get_bKGD(chunks[i].data);
+		else if (!strncmp(type ,"pHYs" ,5)) get_pHYs(chunks[i].data);
+		else if (!strncmp(type ,"sBIT" ,5)) get_sBIT(chunks[i].data);
+		else if (!strncmp(type ,"hIST" ,5)) get_hIST(chunks[i].data);
+		else if (!strncmp(type ,"tIME" ,5)) get_tIME(chunks[i].data);
 		else if (!strncmp(type ,"IEND" ,5)) return; 
 		else{
 			printf("Failed to read chunk %d with type %s\n" ,i ,type);
@@ -137,20 +136,32 @@ get_chunks_data(chunk *chunks ,int chunkslen){
 	
 }
 /*reading chunks into vars.h*/
-void get_IHDR(void){};
-void get_PLTE(void){};
-void get_IDAT(void){};
-void get_tRNS(void){};
-void get_gAMA(void){};
-void get_cHRM(void){};
-void get_sRGB(void){};
-void get_iCCP(void){};
-void get_tEXt(void){};
-void get_zTXt(void){};
-void get_iTXt(void){};
-void get_bKGD(void){};
-void get_pHYs(void){};
-void get_sBIT(void){};
-void get_hIST(void){};
-void get_tIME(void){};
+void get_IHDR(uint8_t *data){
+	uint32_t IHDR_width = read4byteint(data);
+	uint32_t IHDR_height = read4byteint(data + 4);
+
+	uint8_t IHDR_bit_depth = data[5];
+	uint8_t IHDR_color_type = data[5];
+	uint8_t IHDR_compression_method = data[5];
+	uint8_t IHDR_filter_method = data[5];
+	uint8_t IHDR_interlace_method = data[5];
+
+};
+void get_PLTE(uint8_t *data){};
+void get_IDAT(uint8_t *data){
+	uint8_t *IDAT_data = data;
+};
+void get_tRNS(uint8_t *data){};
+void get_gAMA(uint8_t *data){};
+void get_cHRM(uint8_t *data){};
+void get_sRGB(uint8_t *data){};
+void get_iCCP(uint8_t *data){};
+void get_tEXt(uint8_t *data){};
+void get_zTXt(uint8_t *data){};
+void get_iTXt(uint8_t *data){};
+void get_bKGD(uint8_t *data){};
+void get_pHYs(uint8_t *data){};
+void get_sBIT(uint8_t *data){};
+void get_hIST(uint8_t *data){};
+void get_tIME(uint8_t *data){};
 
